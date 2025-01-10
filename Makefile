@@ -5,26 +5,26 @@ export
 
 .PHONY: dependencies
 dependencies:
-	docker-compose run --rm --no-deps php sh -lc './composer install --no-interaction --no-suggest --no-scripts --ansi'
+	docker compose run --rm --no-deps php sh -lc './composer install --no-interaction --no-suggest --no-scripts --ansi'
 
 .PHONY: test
 test:
-	docker-compose run --rm --no-deps php sh -lc './vendor/bin/phpunit --testdox --exclude-group=none --colors=always'
+	docker compose run --rm --no-deps php sh -lc './vendor/bin/phpunit --testdox --exclude-group=none --colors=always'
 
 .PHONY: qa
 qa: php-cs-fixer-ci phpstan
 
 .PHONY: php-cs-fixer
 php-cs-fixer:
-	docker-compose run --rm --no-deps php sh -lc './vendor/bin/php-cs-fixer fix --no-interaction --allow-risky=yes --diff --verbose'
+	docker compose run --rm --no-deps php sh -lc './vendor/bin/php-cs-fixer fix --no-interaction --allow-risky=yes --diff --verbose'
 
 .PHONY: php-cs-fixer-ci
 php-cs-fixer-ci:
-	docker-compose run --rm --no-deps php sh -lc './vendor/bin/php-cs-fixer fix --dry-run --no-interaction --allow-risky=yes --diff --verbose --stop-on-violation'
+	docker compose run --rm --no-deps php sh -lc './vendor/bin/php-cs-fixer fix --dry-run --no-interaction --allow-risky=yes --diff --verbose --stop-on-violation'
 
 PHONY: phpstan
 phpstan:
-	vdocker-compose run --rm --no-deps php sh -lc './endor/bin/phpstan analyse --level=5 src/'
+	docker compose run --rm --no-deps php sh -lc './endor/bin/phpstan analyse --level=5 src/'
 
 .PHONY: changelog
 changelog:
@@ -32,7 +32,7 @@ changelog:
 
 .PHONY: license
 license:
-	docker-compose run --rm --no-deps php sh -lc './vendor/bin/docheader check --no-interaction --ansi -vvv {src,test,examples}'
+	docker compose run --rm --no-deps php sh -lc './vendor/bin/docheader check --no-interaction --ansi -vvv {src,test,examples}'
 
 # Based on https://suva.sh/posts/well-documented-makefiles/
 help:  ## Display this help
@@ -53,35 +53,35 @@ fix-permission: ## fix permission for docker env
 
 .PHONY: build
 build: ## build environment and initialize composer and project dependencies
-	docker build --build-arg CI_SERVICE_NAME=$(CI_SERVICE_NAME) .docker/php8.0-dev/ -t gitlab.micro-moduletech.net:5001/micro-module/dev/shared/modules/package-$(CI_SERVICE_NAME)/php8.0-dev:$(CI_COMMIT_REF_SLUG)
-	docker-compose build
-	docker-compose run --rm --no-deps php sh -lc 'composer install'
+	docker build --build-arg CI_SERVICE_NAME=$(CI_SERVICE_NAME) --build-arg PHP_VER=$(PHP_VER) .docker/php$(PHP_VER)-dev/ -t gitlab.micro-moduletech.net:5001/micro-module/dev/shared/modules/package-$(CI_SERVICE_NAME)/php$(PHP_VER)-dev:$(CI_COMMIT_REF_SLUG)
+	docker compose build
+	docker compose run --rm --no-deps php sh -lc 'composer install'
 
 .PHONY: logs
 logs: ## look for service logs
-	docker-compose logs -f $(RUN_ARGS)
+	docker compose logs -f $(RUN_ARGS)
 
 .PHONY: composer-install
 composer-install: ## Install project dependencies
-	docker-compose run --rm --no-deps php sh -lc 'composer install'
+	docker compose run --rm --no-deps php sh -lc 'composer install'
 
 .PHONY: composer-update
 composer-update: ## Update project dependencies
-	docker-compose run --rm --no-deps php sh -lc 'composer update'
+	docker compose run --rm --no-deps php sh -lc 'composer update'
 
 .PHONY: composer-outdated
 composer-outdated: ## Show outdated project dependencies
-	docker-compose run --rm --no-deps php sh -lc 'composer outdated'
+	docker compose run --rm --no-deps php sh -lc 'composer outdated'
 
 .PHONY: composer-validate
 composer-validate: ## Validate composer config
-	    docker-compose run --rm --no-deps php sh -lc 'composer validate --no-check-publish'
+	    docker compose run --rm --no-deps php sh -lc 'composer validate --no-check-publish'
 
 .PHONY: composer
 composer: ## Execute composer command
-	docker-compose run --rm --no-deps php sh -lc "composer $(RUN_ARGS)"
+	docker compose run --rm --no-deps php sh -lc "composer $(RUN_ARGS)"
 
 .PHONY: phpunit
 phpunit: ## execute project unit tests
-	docker-compose run --rm php sh -lc  "./vendor/bin/phpunit $(conf)"
+	docker compose run --rm php sh -lc  "./vendor/bin/phpunit $(conf)"
 
