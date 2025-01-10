@@ -1,4 +1,6 @@
-FROM php:8.0-cli
+ARG PHP_VER=8.3
+
+FROM php:${PHP_VER}-cli
 
 RUN apt-get update && apt-get install -y git unzip
 

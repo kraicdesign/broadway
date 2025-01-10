@@ -22,7 +22,7 @@ if (file_exists($file = __DIR__.'/../vendor/autoload.php')) {
  */
 class StdoutLogger extends Psr\Log\AbstractLogger
 {
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []): void
     {
         echo sprintf("[%s] %s - %s\n", $level, $message, json_encode($context));
     }
